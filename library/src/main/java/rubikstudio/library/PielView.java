@@ -315,7 +315,7 @@ public class PielView extends View {
 
         Typeface typeface = Typeface.create(Typeface.SERIF, Typeface.BOLD);
         mTextPaint.setTypeface(typeface);
-        mTextPaint.setTextSize(28);
+        mTextPaint.setTextSize(34);
         mTextPaint.setTextAlign(Paint.Align.LEFT);
 
         float textWidth = mTextPaint.measureText(mStr);
@@ -332,10 +332,41 @@ public class PielView extends View {
         Path path = new Path();
         path.addRect(rect, Path.Direction.CW);
         path.close();
+
         canvas.rotate(initFloat + (arraySize / 18f), x, y);
-        canvas.drawTextOnPath(mStr, path, mTopTextPadding / 1f, mTextPaint.getTextSize() / 10f, mTextPaint);
+
+        if(mStr.length() > 16) {
+            String kept = mStr.substring(0, mStr.length() / 2);
+            float textWidthFirst = mTextPaint.measureText(kept);
+
+            RectF rectFirst = new RectF(x + textWidthFirst, y,
+                    x - textWidthFirst, y);
+
+            Path pathFirst = new Path();
+            pathFirst.addRect(rectFirst, Path.Direction.CW);
+            pathFirst.close();
+
+            canvas.drawTextOnPath(kept, pathFirst, mTopTextPadding / 1f, mTextPaint.getTextSize() / 10f, mTextPaint);
+            y +=  mTextPaint.ascent() - mTextPaint.descent();
+
+            String remainder = mStr.substring(mStr.length()/2, mStr.length());
+            float textWidthSecond = mTextPaint.measureText(remainder);
+
+            RectF rectSecond = new RectF(x + textWidthSecond, y,
+                    x - textWidthSecond, y);
+
+            Path pathSecond = new Path();
+            pathSecond.addRect(rectSecond, Path.Direction.CW);
+            pathSecond.close();
+            canvas.drawTextOnPath(remainder, pathSecond, mTopTextPadding / 1f, mTextPaint.getTextSize() / 10f, mTextPaint);
+
+        } else {
+            canvas.drawTextOnPath(mStr, path, mTopTextPadding / 1f, mTextPaint.getTextSize() / 10f, mTextPaint);
+
+        }
         canvas.restore();
     }
+
 
     /**
      * @return
